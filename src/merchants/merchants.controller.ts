@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Param,
+  Patch,
   Delete,
   Put,
   HttpCode,
@@ -11,14 +12,16 @@ import {
 } from '@nestjs/common';
 import { MerchantsService } from './merchants.service';
 import { Merchant } from './entities/merchant.entity';
+import { CreateMerchantDto } from './dto/create-merchant.dto';
+import { UpdateMerchantDto } from './dto/update-merchant.dto';
 
 // Para simplificar, vamos definir os DTOs diretamente aqui por enquanto.
 // O ideal é criar arquivos separados para eles em uma pasta 'dto'.
-class CreateMerchantDto {
-  name: string;
-  email: string;
-  documentNumber: string;
-}
+// class CreateMerchantDto {
+//   name: string;
+//   email: string;
+//   documentNumber: string;
+// }
 
 // class UpdateMerchantDto {
 //   name?: string;
@@ -49,17 +52,20 @@ export class MerchantsController {
   @Put(':id') // PUT geralmente substitui o recurso inteiro
   update(
     @Param('id') id: string,
-    @Body() updateMerchantDto: CreateMerchantDto,
+    @Body() updateFullMerchantDto: CreateMerchantDto,
   ): Merchant {
     // Para PUT, esperamos todos os campos obrigatórios, similar ao Create DTO
-    return this.merchantsService.update(id, updateMerchantDto);
+    return this.merchantsService.update(id, updateFullMerchantDto);
   }
 
   // Alternativamente, poderíamos usar PATCH para atualizações parciais
-  // @Patch(':id')
-  // partialUpdate(@Param('id') id: string, @Body() updateMerchantDto: UpdateMerchantDto): Merchant {
-  //   return this.merchantsService.update(id, updateMerchantDto);
-  // }
+  @Patch(':id')
+  partialUpdate(
+    @Param('id') id: string,
+    @Body() updateMerchantDto: UpdateMerchantDto,
+  ): Merchant {
+    return this.merchantsService.update(id, updateMerchantDto);
+  }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
