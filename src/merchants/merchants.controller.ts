@@ -15,61 +15,46 @@ import { Merchant } from './entities/merchant.entity';
 import { CreateMerchantDto } from './dto/create-merchant.dto';
 import { UpdateMerchantDto } from './dto/update-merchant.dto';
 
-// Para simplificar, vamos definir os DTOs diretamente aqui por enquanto.
-// O ideal é criar arquivos separados para eles em uma pasta 'dto'.
-// class CreateMerchantDto {
-//   name: string;
-//   email: string;
-//   documentNumber: string;
-// }
-
-// class UpdateMerchantDto {
-//   name?: string;
-//   email?: string;
-//   documentNumber?: string;
-// }
-
-@Controller('merchants') // Define a rota base para este controller como /merchants
+@Controller('merchants')
 export class MerchantsController {
   constructor(private readonly merchantsService: MerchantsService) {}
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createMerchantDto: CreateMerchantDto): Merchant {
-    // Aqui deveríamos usar class-validator para validar o DTO, mas faremos isso depois
+  async create(
+    @Body() createMerchantDto: CreateMerchantDto,
+  ): Promise<Merchant> {
     return this.merchantsService.create(createMerchantDto);
   }
 
   @Get()
-  findAll(): Merchant[] {
+  async findAll(): Promise<Merchant[]> {
     return this.merchantsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Merchant {
+  async findOne(@Param('id') id: string): Promise<Merchant> {
     return this.merchantsService.findOne(id);
   }
 
-  @Put(':id') // PUT geralmente substitui o recurso inteiro
-  update(
+  @Put(':id')
+  async update(
     @Param('id') id: string,
     @Body() updateFullMerchantDto: CreateMerchantDto,
-  ): Merchant {
-    // Para PUT, esperamos todos os campos obrigatórios, similar ao Create DTO
+  ): Promise<Merchant> {
     return this.merchantsService.update(id, updateFullMerchantDto);
   }
 
-  // Alternativamente, poderíamos usar PATCH para atualizações parciais
   @Patch(':id')
-  partialUpdate(
+  async partialUpdate(
     @Param('id') id: string,
     @Body() updateMerchantDto: UpdateMerchantDto,
-  ): Merchant {
+  ): Promise<Merchant> {
     return this.merchantsService.update(id, updateMerchantDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string): void {
+  async remove(@Param('id') id: string): Promise<void> {
     return this.merchantsService.remove(id);
   }
 }
