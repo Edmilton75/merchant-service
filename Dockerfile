@@ -5,8 +5,9 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-# Instala apenas as dependências de produção
-RUN npm install --only=production
+# CORREÇÃO: Instala TODAS as dependências (incluindo devDependencies)
+# para que o comando 'npm run build' funcione.
+RUN npm install
 
 COPY . .
 
@@ -17,9 +18,8 @@ FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
-# Copia as dependências e a aplicação compilada do estágio de build
+# Copia apenas as dependências de produção e a aplicação compilada do estágio de build
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/dist ./dist
 
-# O comando que será executado para iniciar a aplicação
 CMD ["node", "dist/main"]
